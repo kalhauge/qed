@@ -12,10 +12,11 @@ public class QedService {
   private final File root;
   private HttpServer server;
 
-  public QedService(File root, Object facade) throws IOException {
-    this.root = root;
+  public QedService(Object root, Object facade) throws IOException {
+    if (root instanceof File) this.root = (File)root;
+    else this.root = new File(root.getClass().getResource("/").getPath());
     this.server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-    server.createContext("/", new FileHandler(root));
+    server.createContext("/", new FileHandler(this.root));
     server.createContext("/qed", new QedHandler(facade));
     System.out.println("QED Service listening on "+PORT);
     server.start();
