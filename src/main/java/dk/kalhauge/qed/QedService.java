@@ -32,6 +32,7 @@ public class QedService implements AutoCloseable {
     }
   
   public void console() throws IOException {
+    System.out.println("console()");
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     do {
       System.out.print("QED> ");
@@ -42,11 +43,13 @@ public class QedService implements AutoCloseable {
     }
   
   public QedService start() {
+    System.out.println("start()");
     server.start();
     return this;
     }
   
   public void stop() {
+    System.out.println("stop()");
     server.stop(0);
     }
   
