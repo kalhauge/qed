@@ -7,29 +7,51 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 
-public class QedService {
+public class QedService implements AutoCloseable {
   private static final int PORT = 4711;
-  private final File root;
-  private HttpServer server;
+  private File root;
+  private final HttpServer server;
 
-  public QedService(Object root, Object facade) throws IOException {
-    if (root instanceof File) this.root = (File)root;
-    else this.root = new File(root.getClass().getResource("/").getPath());
+  public QedService(Object facade) throws IOException {
+    this.root = new File(getClass().getResource("/").getPath());
     this.server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+    
     server.createContext("/", new FileHandler(this.root));
     server.createContext("/qed", new QedHandler(facade));
     System.out.println("QED Service listening on "+PORT);
-    server.start();
+    }
+  
+  public QedService root(File root) {
+    this.root = root;
+    return this;
+    }
+  
+  public QedService root(String path) {
+    root = new File(path);
+    return this;
+    }
+  
+  public void console() throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    String command = in.readLine();
-    while (command != null) {
+    do {
+      System.out.print("QED> ");
+      String command = in.readLine();
       if("exit".equals(command)) break;
-      command = in.readLine();
       }
-    server.stop(0);
+    while (true);
+    }
+  
+  public QedService start() {
+    server.start();
+    return this;
     }
   
   public void stop() {
+    server.stop(0);
+    }
+  
+  @Override
+  public void close() {
     server.stop(0);
     }
   
