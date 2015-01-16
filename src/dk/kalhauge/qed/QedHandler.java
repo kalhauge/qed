@@ -16,21 +16,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Set;
 
 public class QedHandler implements HttpHandler {
   private static Gson gson = new Gson();
   public final Object target;
-  public static final Set<String> ignore = new HashSet<>();
-  static { 
-    ignore.add("wait");
-    ignore.add("equals");
-    ignore.add("toString");
-    ignore.add("hashCode");
-    ignore.add("getClass");
-    ignore.add("notify");
-    ignore.add("notifyAll");
-    }
+  public static final Set<String> ignore = new HashSet<String>(
+    Arrays.asList(new String [] {
+      "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll"
+        })
+      );
   
   public QedHandler(Object target) {
     this.target = target;
