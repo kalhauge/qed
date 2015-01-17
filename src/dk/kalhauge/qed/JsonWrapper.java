@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import static dk.kalhauge.qed.Utils.*;
 
 public class JsonWrapper {
   private static final Gson gson = new Gson();
@@ -30,13 +31,13 @@ public class JsonWrapper {
     this.object = object;
     for (Method method : object.getClass().getMethods()) {
       if (ignore.contains(method.getName())) continue;
-      methods.add(new Operation(method.getName(), method.getParameterCount()));
+      methods.add(Operation.fromParameterCount(method.getName(), getParameterCount(method)));
       }
     }
   
   private Method findMethodCalled(String name, int count) {
     for (Method method : object.getClass().getMethods()) 
-        if (method.getName().equals(name) && method.getParameterCount() == count) return method;
+        if (method.getName().equals(name) && getParameterCount(method) == count) return method;
     throw new RuntimeException("No such method");
     }
   
@@ -59,23 +60,25 @@ public class JsonWrapper {
   public Collection<Operation> getOperations() { return methods; }
   
   public static class Operation {
-    private static final String template = 
-        ", a, b, c, d, e, f, g, h, i, j, k, l, m"+
-        ", n, o, p, q, r, s, t, u, v, w, x, y, z";
     private final String name;
-    private final String list;
+    private final String params;
 
-    Operation(String name, int argumentCount) {
+    Operation(String name, String params) {
       this.name = name;
-      list = argumentCount == 0 ? "" : template.substring(2, 3*argumentCount);
+      this.params = params;
+      }
+
+    public static Operation fromParameterCount(String name, int parameterCount) {
+      return new Operation(name, join(", ", alphabeth.subList(0, parameterCount)));
       }
     
     public String toJavaScriptDefinition() {
-      return "function "+name+"("+list+")";
+      return join("", "function ", name, "(", params, ")");
       }
     
     public String toExecutorDefinition() {
-      return "('"+name+"'"+(list.isEmpty() ? "" : ", "+list)+")";
+      String content = params.isEmpty() ? name : join(", ", name, params);
+      return join("", "(", content, ")");
       }
     
     }

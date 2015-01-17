@@ -1,0 +1,17 @@
+QED
+===
+
+A simplistic WYDIPNGTM front-end end for Java. 
+
+
+Building
+--------
+
+The project uses Maven as its primary builder. The maven
+project is located under `maven/`, from where it is easy to build the
+project using the command:
+
+    mvn build
+
+
+

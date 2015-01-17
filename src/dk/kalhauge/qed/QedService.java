@@ -41,7 +41,7 @@ public class QedService {
     return this;
     }
 
-  public QedService start(InetSocketAddress addr) {
+  public QedService start(InetSocketAddress addr) throws IOException {
     log.fine("Starting QedService");
     server = HttpServer.create(addr, 0);
     HttpServer server = HttpServer.create(addr, 0);
@@ -56,7 +56,7 @@ public class QedService {
     return start(new InetSocketAddress("localhost", PORT));
     }
 
-  public QedService readCommandsAndStop() {
+  public QedService console() throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String command = in.readLine();
     while (command != null) {
